@@ -65,7 +65,7 @@ int main(/*int argc, char* argv[]*/)
 {
   
   // Initalise here (open input file, create output, initalise tauspinner etc...)
-	TFile file("/vols/cms/ktc17/MVAFILE_AllHiggs_tt.root", "READ");
+	TFile file("/vols/cms/dw515/masters_ntuples/MVAFILE_GEN_AllHiggs_tt.root", "READ");
   if (file.IsZombie())
 	{
 		std::cerr << "File didn't load correctly." << std::endl;
@@ -74,22 +74,35 @@ int main(/*int argc, char* argv[]*/)
 	TTree *tree = static_cast<TTree*>(file.Get("ntuple"));
 	
 	// Setup variables to read from branches
+	/*
 	int tau_decay_mode_1, tau_decay_mode_2, mva_dm_1, mva_dm_2;
 	tree->SetBranchAddress("tau_decay_mode_1", &tau_decay_mode_1);
 	tree->SetBranchAddress("tau_decay_mode_2", &tau_decay_mode_2);
 	tree->SetBranchAddress("mva_dm_1", &mva_dm_1);
 	tree->SetBranchAddress("mva_dm_2", &mva_dm_2);
+	*/
+	double dm_1, dm_2;
+	double stored_wt_cp_sm, stored_wt_cp_mm, stored_wt_cp_ps;
+	tree->SetBranchAddress("dm_1", &dm_1);
+	tree->SetBranchAddress("dm_2", &dm_2);
+	tree->SetBranchAddress("wt_cp_sm", &stored_wt_cp_sm);
+	tree->SetBranchAddress("wt_cp_mm", &stored_wt_cp_mm);
+	tree->SetBranchAddress("wt_cp_ps", &stored_wt_cp_ps);
 	
 	// Setup particles
-	Particle pi_1, pi_2, pi0_1, pi0_2;
+	Particle pi_1, pi_2, pi0_1, pi0_2, nu_1, nu_2;
 	setupParticle(tree, "pi", pi_1, -211, 1);
 	setupParticle(tree, "pi", pi_2, 211, 2);
 	setupParticle(tree, "pi0", pi0_1, 111, 1);
 	setupParticle(tree, "pi0", pi0_2, 111, 2);
+	setupParticle(tree, "nu", nu_1, 16, 1);
+	setupParticle(tree, "nu", nu_2, -16, 2);
+	/*
 	// Set neutrinos to read from gen for now
 	PEtaPhi nu_1, nu_2;
 	setupNeutrino(tree, "gen_nu", nu_1, 16, 1);
 	setupNeutrino(tree, "gen_nu", nu_2, -16, 2);
+	*/
 	
 	// Variables for initialising TauSpinner
   std::string TauSpinnerSettingsPDF="NNPDF30_nlo_as_0118";
@@ -100,7 +113,7 @@ int main(/*int argc, char* argv[]*/)
   double CMSENE=13000.0;
 	
 	// Initialise TauSpinner
-  Tauolapp::Tauola::setNewCurrents(1);
+  Tauolapp::Tauola::setNewCurrents(0);
   Tauolapp::Tauola::initialize();
   LHAPDF::initPDFSetByName(TauSpinnerSettingsPDF);
   TauSpinner::initialize_spinner(Ipp, Ipol, nonSM2, nonSMN,  CMSENE);
@@ -111,16 +124,15 @@ int main(/*int argc, char* argv[]*/)
   {
   	tree->GetEntry(i);
   	//std::cout << i << std::endl;
-  	if ( mva_dm_1 == 1 && mva_dm_2 == 1
-  			 && tau_decay_mode_1 == 1 && tau_decay_mode_2 == 1
+  	if ( dm_1 == 1 && dm_2 == 1
   	) // Event Selection
   	{
 			auto pi_1_simple = convertToSimplePart(pi_1);
 			auto pi_2_simple = convertToSimplePart(pi_2);
 			auto pi0_1_simple = convertToSimplePart(pi0_1);
 			auto pi0_2_simple = convertToSimplePart(pi0_2);
-			auto nu_1_simple = neutrinoToSimplePart(nu_1);
-			auto nu_2_simple = neutrinoToSimplePart(nu_2);
+			auto nu_1_simple = convertToSimplePart(nu_1);
+			auto nu_2_simple = convertToSimplePart(nu_2);
 			
 			//std::cout << "nu_2_Epxpypz, E=" << nu_2_simple.e() << "\tpx=" << nu_2_simple.px() << "\tpy=" << nu_2_simple.py() << "\tpz=" << nu_2_simple.pz() << std::endl;
 			
@@ -165,6 +177,7 @@ int main(/*int argc, char* argv[]*/)
 			std::cout << "Other weights CP: " << wt_prod << wt_P << wt_M << std::endl;// << wt_EW << wt_EW0 << std::endl;
 			*/
 			std::cout << "Event " << i << " weights: sm = " << weight_sm << "\tweight_mm = " << weight_mm << "\tweightcp = " << weight_cp << std::endl;
+			std::cout << "Stored weights: sm = " << stored_wt_cp_sm << "\tmm = " << stored_wt_cp_mm << "\tps = " << stored_wt_cp_ps << std::endl;
   	} // Event selection
 	} // Event loop
   
