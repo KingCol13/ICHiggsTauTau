@@ -34,8 +34,8 @@ namespace pola
 		TVector3 vis_dir = tau_vis.Vect().Unit();
 		TVector3 tau_dir = sv.Unit();
 		
-    double theta_GJ = std::acos(std::clamp(tau_dir.Dot(vis_dir.Unit()), -1.0, 1.0));
-    double theta_GJ_max = std::asin(std::clamp((m_tau*m_tau - m_vis*m_vis)/(2*m_tau*tau_vis.P()), -1.0, 1.0));
+		double theta_GJ = std::acos(std::clamp(tau_dir.Dot(vis_dir.Unit()), -1.0, 1.0));
+		double theta_GJ_max = std::asin(std::clamp((m_tau*m_tau - m_vis*m_vis)/(2*m_tau*tau_vis.P()), -1.0, 1.0));
 		
 		TVector3 new_dir;
 		// Rotate tau back if theta_GJ is in unphysical region
@@ -73,13 +73,13 @@ namespace pola
 		}
 		
 		// Calculate the tau momentum
-    double minus_b = (m_vis*m_vis + m_tau*m_tau) * tau_vis.P() * std::cos(theta_GJ);
-    double two_a = 2*(m_vis*m_vis + std::pow(tau_vis.P(), 2) * std::pow(std::sin(theta_GJ), 2));
+		double minus_b = (m_vis*m_vis + m_tau*m_tau) * tau_vis.P() * std::cos(theta_GJ);
+		double two_a = 2*(m_vis*m_vis + std::pow(tau_vis.P(), 2) * std::pow(std::sin(theta_GJ), 2));
 		double b_squared_m_four_ac = (m_vis*m_vis + std::pow(tau_vis.P(), 2)) * (std::pow(m_vis*m_vis - m_tau*m_tau, 2) - 4*m_tau*m_tau*std::pow(tau_vis.P(), 2)*std::pow(std::sin(theta_GJ), 2));
-    b_squared_m_four_ac = std::max(b_squared_m_four_ac, 0.0);
-    
-    // two solutions for tau momentum magnitude
-    double sol_1 = (minus_b + std::sqrt(b_squared_m_four_ac))/two_a;
+		b_squared_m_four_ac = std::max(b_squared_m_four_ac, 0.0);
+
+		// two solutions for tau momentum magnitude
+		double sol_1 = (minus_b + std::sqrt(b_squared_m_four_ac))/two_a;
 		double sol_2 = (minus_b - std::sqrt(b_squared_m_four_ac))/two_a;
 		
 		tau_sol_1 = TLorentzVector(sol_1*new_dir, std::sqrt(sol_1*sol_1+m_tau*m_tau));
@@ -157,7 +157,8 @@ namespace ic
 		std::cout << pis_2.size() << std::endl;
 		SCalculator Scalc("a1");
 		double angle = -9999.;
-		if(Scalc.isOk("a1", "pion", Tauminus, pis_1, charges_1, Tauplus, pis_2, charges_2)){
+		if(Scalc.isOk("a1", "pion", Tauminus, pis_1, charges_1, Tauplus, pis_2, charges_2))
+		{
 			std::cout << "It's ok 5 \n"<< std::endl;
 			angle = Scalc.AcopAngle("a1", "pion", Tauminus, pis_1, charges_1, Tauplus, pis_2, charges_2);
 			std::cout << "\nGood variables - Angle: " << angle << '\n';
@@ -209,7 +210,7 @@ namespace ic
 		}
 		
 		return Scalc.AcopAngle("a1", "pion", Tauminus, pis_1, charges_1, Tauplus, pis_2, charges_2);
-  }
+	}
 	
 	double getIPPV_angle(TLorentzVector Tauminus, std::vector<TLorentzVector> sumPionsMinus, TLorentzVector IP_vect_1, int mva_dm1,
 	                     TLorentzVector Tauplus, std::vector<TLorentzVector> sumPionsPlus, TLorentzVector IP_vect_2, int mva_dm2)

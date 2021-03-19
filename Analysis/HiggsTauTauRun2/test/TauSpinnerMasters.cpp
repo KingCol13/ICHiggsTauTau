@@ -52,7 +52,7 @@ void setupNeutrino(TTree *a_tree, std::string a_name, PEtaPhi &a_PEtaPhi, int a_
 
 TauSpinner::SimpleParticle convertToSimplePart(const Particle &a_particle)
 {
-  return TauSpinner::SimpleParticle(a_particle.px, a_particle.py, a_particle.pz, a_particle.E, a_particle.pdgID);
+	return TauSpinner::SimpleParticle(a_particle.px, a_particle.py, a_particle.pz, a_particle.E, a_particle.pdgID);
 }
 
 TauSpinner::SimpleParticle neutrinoToSimplePart(const PEtaPhi &a_PEtaPhi, std::normal_distribution<double> &a_smearDist, std::mt19937 &a_rng)
@@ -63,7 +63,7 @@ TauSpinner::SimpleParticle neutrinoToSimplePart(const PEtaPhi &a_PEtaPhi, std::n
 	double py = particle.Py() + a_smearDist(a_rng);
 	double pz = particle.Pz() + a_smearDist(a_rng);
 	double E = std::sqrt(px*px + py*py + pz*pz);
-  return TauSpinner::SimpleParticle(px, py, pz, E, a_PEtaPhi.pdgID);
+	return TauSpinner::SimpleParticle(px, py, pz, E, a_PEtaPhi.pdgID);
 }
 
 inline void setupTauDaughters(int decayMode, std::vector<TauSpinner::SimpleParticle> &daughters, Particle &pi0, Particle &pi2, Particle &pi3)
@@ -155,10 +155,10 @@ int main(int argc, char* argv[])
 	std::normal_distribution<double> smearDist(0, smearing);
 	std::cout << "Using smearing = " << smearing << std::endl;
 	
-  // Initalise here (open input file, create output, initalise tauspinner etc...)
+	// Initalise here (open input file, create output, initalise tauspinner etc...)
 	//TFile oldFile("/vols/cms/ktc17/MVAFILE_AllHiggs_tt.root", "READ");
-  TFile oldFile(inputFilename.c_str(), "READ");
-  if (oldFile.IsZombie())
+	TFile oldFile(inputFilename.c_str(), "READ");
+	if (oldFile.IsZombie())
 	{
 		std::cerr << "File didn't load correctly." << std::endl;
 		return -1;
@@ -242,24 +242,24 @@ int main(int argc, char* argv[])
 	}
 	
 	// Variables for initialising TauSpinner
-  std::string TauSpinnerSettingsPDF="NNPDF30_nlo_as_0118";
-  bool Ipp=true;
-  int Ipol=0;
-  int nonSM2=0;
-  int nonSMN=0;
-  double CMSENE=13000.0;
+	std::string TauSpinnerSettingsPDF="NNPDF30_nlo_as_0118";
+	bool Ipp=true;
+	int Ipol=0;
+	int nonSM2=0;
+	int nonSMN=0;
+	double CMSENE=13000.0;
 	
 	// Initialise TauSpinner
-  Tauolapp::Tauola::setNewCurrents(1);
-  Tauolapp::Tauola::initialize();
-  LHAPDF::initPDFSetByName(TauSpinnerSettingsPDF);
-  TauSpinner::initialize_spinner(Ipp, Ipol, nonSM2, nonSMN,  CMSENE);
-  
-  // Event loop
-  for (int iEntry = 0, nEntries = tree->GetEntries(); iEntry < nEntries; iEntry++)
-  //for (int iEntry = 0, nEntries = 100; iEntry < nEntries; iEntry++)
-  {
-  	tree->GetEntry(iEntry);
+	Tauolapp::Tauola::setNewCurrents(1);
+	Tauolapp::Tauola::initialize();
+	LHAPDF::initPDFSetByName(TauSpinnerSettingsPDF);
+	TauSpinner::initialize_spinner(Ipp, Ipol, nonSM2, nonSMN,  CMSENE);
+
+	// Event loop
+	for (int iEntry = 0, nEntries = tree->GetEntries(); iEntry < nEntries; iEntry++)
+	//for (int iEntry = 0, nEntries = 100; iEntry < nEntries; iEntry++)
+	{
+		tree->GetEntry(iEntry);
 		//std::cout << "Entry: " << i << std::endl;
 		
 		// Loop through different levels
@@ -339,9 +339,9 @@ int main(int argc, char* argv[])
 			phitt_branches[iLevel]->Fill();
 		} // Levels loop
 	} // Event loop
-  
-  // Write new trees here
-  tree->Write("", TObject::kOverwrite);
-  
-  return 0;
+
+	// Write new trees here
+	tree->Write("", TObject::kOverwrite);
+
+	return 0;
 }
